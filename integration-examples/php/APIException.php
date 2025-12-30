@@ -5,13 +5,13 @@ namespace AlifPaymentSDK;
 class APIException extends \Exception
 {
     private int $statusCode;
-    private int $code;
+    private int $apiCode;
 
     public function __construct(int $statusCode, int $code, string $message)
     {
-        parent::__construct(sprintf('API error (HTTP %d, code %d): %s', $statusCode, $code, $message));
+        parent::__construct(sprintf('API error (HTTP %d, code %d): %s', $statusCode, $code, $message), $code);
         $this->statusCode = $statusCode;
-        $this->code = $code;
+        $this->apiCode = $code;
     }
 
     public function getStatusCode(): int
@@ -19,9 +19,9 @@ class APIException extends \Exception
         return $this->statusCode;
     }
 
-    public function getCode(): int
+    public function getApiCode(): int
     {
-        return $this->code;
+        return $this->apiCode;
     }
 }
 

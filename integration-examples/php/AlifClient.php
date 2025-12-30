@@ -17,30 +17,46 @@ class AlifClient
 
     private function doRequest(string $url, string $method, ?array $body, array $headers): array
     {
-        $ch = curl_init($url);
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-
+        // Prepare headers
         if ($body !== null) {
-            $jsonBody = json_encode($body);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonBody);
             $headers['Content-Type'] = 'application/json';
         }
-
-        $curlHeaders = [];
+        
+        $httpHeaders = [];
         foreach ($headers as $key => $value) {
-            $curlHeaders[] = "$key: $value";
+            $httpHeaders[] = "$key: $value";
         }
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $curlHeaders);
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        // Prepare context options
+        $options = [
+            'http' => [
+                'method' => $method,
+                'header' => implode("\r\n", $httpHeaders),
+                'timeout' => 30,
+                'ignore_errors' => true
+            ]
+        ];
+
+        if ($body !== null) {
+            $options['http']['content'] = json_encode($body);
+        }
+
+        $context = stream_context_create($options);
+        $response = file_get_contents($url, false, $context);
 
         if ($response === false) {
             throw new \Exception('Failed to execute request');
+        }
+
+        // Get HTTP response code
+        $httpCode = 200;
+        if (isset($http_response_header)) {
+            foreach ($http_response_header as $header) {
+                if (preg_match('/^HTTP\/\d\.\d\s+(\d+)/', $header, $matches)) {
+                    $httpCode = (int)$matches[1];
+                    break;
+                }
+            }
         }
 
         $responseData = json_decode($response, true);
