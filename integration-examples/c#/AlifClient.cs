@@ -41,7 +41,8 @@ namespace AlifPaymentSDK
             }
 
             var response = await _httpClient.SendAsync(request);
-            var responseBody = await response.Content.ReadAsStringAsync();
+            var responseBytes = await response.Content.ReadAsByteArrayAsync();
+            var responseBody = Encoding.UTF8.GetString(responseBytes);
             var responseData = JsonSerializer.Deserialize<Response>(responseBody);
 
             // Handle error responses based on HTTP status codes (e.g., 400, 401, 403, 500)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -245,7 +246,7 @@ namespace AlifPaymentSDK
     {
         public int StatusCode { get; set; }
         public int Code { get; set; }
-        public string Message { get; set; }
+        public new string Message { get; set; }
 
         public APIException(int statusCode, int code, string message)
             : base($"API error (HTTP {statusCode}, code {code}): {message}")

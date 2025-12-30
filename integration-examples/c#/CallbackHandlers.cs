@@ -218,5 +218,28 @@ namespace AlifPaymentSDK
             }
         }
     }
+
+    // ------------------------------ Unified callback handlers ------------------------------
+
+    /// <summary>
+    /// Unified class for all callback handlers
+    /// </summary>
+    public static class CallbackHandlers
+    {
+        public static void HandlePaymentCallback(CallbackData data)
+        {
+            PaymentCallbackHandler.HandlePaymentCallback(data);
+        }
+
+        public static void HandleTokenizationCallback(TokenizationCallbackData data)
+        {
+            TokenizationCallbackHandler.HandleTokenizationCallback(data);
+        }
+
+        public static void HandleMarketplaceCallback(MarketplaceCallbackData data)
+        {
+            MarketplaceCallbackHandler.HandleMarketplaceCallback(data);
+        }
+    }
 }
 
